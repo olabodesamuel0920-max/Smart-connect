@@ -48,10 +48,8 @@ export const MOCK_PRODUCTS: Product[] = [
     stock_quantity: 10,
     negotiation_allowed: true,
     is_active: true,
-    images: [
+    product_images: [
       {
-        id: "img-1",
-        product_id: "prod-1",
         image_url: "https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&q=80&w=800",
         is_primary: true
       }
@@ -70,10 +68,8 @@ export const MOCK_PRODUCTS: Product[] = [
     stock_quantity: 5,
     negotiation_allowed: false,
     is_active: true,
-    images: [
+    product_images: [
       {
-        id: "img-2",
-        product_id: "prod-2",
         image_url: "https://images.unsplash.com/photo-1517336714460-4c50d9178051?auto=format&fit=crop&q=80&w=800",
         is_primary: true
       }
@@ -92,10 +88,8 @@ export const MOCK_PRODUCTS: Product[] = [
     stock_quantity: 3,
     negotiation_allowed: true,
     is_active: true,
-    images: [
+    product_images: [
       {
-        id: "img-3",
-        product_id: "prod-3",
         image_url: "https://images.unsplash.com/photo-1606813907291-d86ebb9954ad?auto=format&fit=crop&q=80&w=800",
         is_primary: true
       }

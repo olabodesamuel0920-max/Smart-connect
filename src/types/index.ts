@@ -37,12 +37,6 @@ export interface Product {
   stock_quantity: number;
   negotiation_allowed: boolean;
   is_active: boolean;
-  images: ProductImage[];
+  product_images?: { image_url: string; is_primary?: boolean }[];
 }
 
-export interface ProductImage {
-  id: string;
-  product_id: string;
-  image_url: string;
-  is_primary: boolean;
-}

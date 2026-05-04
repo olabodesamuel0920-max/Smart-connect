@@ -22,7 +22,7 @@ export default function ProductForm({ initialData, onSubmit, isLoading }: Produc
     stock_quantity: initialData?.stock_quantity || 0,
     negotiation_allowed: initialData?.negotiation_allowed ?? true,
     is_active: initialData?.is_active ?? true,
-    image_url: initialData?.images?.[0]?.image_url || "",
+    image_url: initialData?.product_images?.[0]?.image_url || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {

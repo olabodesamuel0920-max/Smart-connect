@@ -51,7 +51,7 @@ export default function ProductDetailPage() {
           <div className="space-y-4">
             <div className="aspect-square bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-800">
               <img 
-                src={product.images[0]?.image_url} 
+                src={product.product_images?.[0]?.image_url} 
                 alt={product.name} 
                 className="w-full h-full object-cover"
               />

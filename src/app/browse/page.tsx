@@ -96,7 +96,7 @@ export default function BrowsePage() {
                 price={product.price.toLocaleString()}
                 category={product.category}
                 slug={product.slug}
-                imageUrl={product.images[0]?.image_url}
+                imageUrl={product.product_images?.[0]?.image_url}
                 storeName={MOCK_STORES.find(s => s.id === product.store_id)?.name || "Unknown Store"}
                 isVerified={true}
               />
