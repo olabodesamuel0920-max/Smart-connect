@@ -13,16 +13,18 @@ export default function DashboardSidebar({ role, active }: SidebarProps) {
     { name: 'Profile', href: '/dashboard/profile', icon: User },
   ];
 
-  const sellerLinks = [
     { name: 'Store Overview', href: '/seller', icon: LayoutDashboard },
-    { name: 'Products', href: '/seller/products', icon: ShoppingBag },
-    { name: 'Store Profile', href: '/seller/store', icon: Store },
+    { name: 'Orders', href: '/seller/orders', icon: ShoppingBag },
+    { name: 'Products', href: '/seller/products', icon: Store },
+    { name: 'Store Profile', href: '/seller/store', icon: Settings },
   ];
 
   const adminLinks = [
-    { name: 'Pending Sellers', href: '/admin', icon: ShieldCheck },
-    { name: 'All Profiles', href: '/admin/profiles', icon: User },
-    { name: 'System Settings', href: '/admin/settings', icon: Settings },
+    { name: 'Admin Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Sellers Verification', href: '/admin/sellers', icon: ShieldCheck },
+    { name: 'Orders', href: '/admin/orders', icon: ShoppingBag },
+    { name: 'Payments', href: '/admin/payments', icon: User },
+    { name: 'Settings', href: '/admin/settings', icon: Settings },
   ];
 
   const links = role === 'admin' ? adminLinks : role === 'seller' ? sellerLinks : customerLinks;

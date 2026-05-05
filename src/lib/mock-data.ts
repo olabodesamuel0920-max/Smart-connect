@@ -96,3 +96,56 @@ export const MOCK_PRODUCTS: Product[] = [
     ]
   }
 ];
+
+export const MOCK_ORDERS: any[] = [
+  {
+    id: "ord-1",
+    customer_id: "customer-1",
+    seller_profile_id: "seller-1",
+    store_id: "store-1",
+    total_amount: 1250000,
+    status: "paid",
+    delivery_address: "123 Tech Avenue, Lagos",
+    delivery_note: "Gate code 1234",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }
+];
+
+export const MOCK_ORDER_ITEMS: any[] = [
+  {
+    id: "item-1",
+    order_id: "ord-1",
+    product_id: "prod-1",
+    quantity: 1,
+    unit_price: 1250000,
+    subtotal: 1250000,
+  }
+];
+
+export const MOCK_PAYMENTS: any[] = [
+  {
+    id: "pay-1",
+    order_id: "ord-1",
+    customer_id: "customer-1",
+    paystack_reference: "T123456789",
+    amount: 1250000,
+    status: "success",
+    paid_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  }
+];
+
+export const MOCK_HELD_FUNDS: any[] = [
+  {
+    id: "fund-1",
+    order_id: "ord-1",
+    seller_profile_id: "seller-1",
+    total_amount: 1250000,
+    commission_amount: 62500,
+    seller_receivable: 1187500,
+    status: "held",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }
+];

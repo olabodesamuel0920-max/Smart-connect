@@ -110,12 +110,11 @@ export default function ProductDetailPage() {
               </div>
             </Link>
 
-            {/* Action Buttons */}
             <div className="space-y-4 mb-8">
-              <button className="w-full btn-primary py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 shadow-xl shadow-emerald-900/20">
+              <Link href={`/checkout/${product.slug}`} className="w-full btn-primary py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 shadow-xl shadow-emerald-900/20">
                 <ShoppingCart size={22} />
                 Initiate Purchase
-              </button>
+              </Link>
               <button className="w-full bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-800 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all">
                 <MessageSquare size={22} />
                 Chat with Seller
