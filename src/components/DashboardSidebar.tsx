@@ -1,5 +1,14 @@
-import Link from "next/link";
-import { LayoutDashboard, ShoppingBag, User, Store, ShieldCheck, Settings, LogOut } from "lucide-react";
+import Link from 'next/link';
+import {
+  LayoutDashboard,
+  ShoppingBag,
+  User,
+  Store,
+  ShieldCheck,
+  Settings,
+  LogOut,
+  CreditCard,
+} from 'lucide-react';
 
 interface SidebarProps {
   role: 'customer' | 'seller' | 'admin';
@@ -13,6 +22,7 @@ export default function DashboardSidebar({ role, active }: SidebarProps) {
     { name: 'Profile', href: '/dashboard/profile', icon: User },
   ];
 
+  const sellerLinks = [
     { name: 'Store Overview', href: '/seller', icon: LayoutDashboard },
     { name: 'Orders', href: '/seller/orders', icon: ShoppingBag },
     { name: 'Products', href: '/seller/products', icon: Store },
@@ -23,33 +33,43 @@ export default function DashboardSidebar({ role, active }: SidebarProps) {
     { name: 'Admin Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'Sellers Verification', href: '/admin/sellers', icon: ShieldCheck },
     { name: 'Orders', href: '/admin/orders', icon: ShoppingBag },
-    { name: 'Payments', href: '/admin/payments', icon: User },
+    { name: 'Payments', href: '/admin/payments', icon: CreditCard },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
   ];
 
-  const links = role === 'admin' ? adminLinks : role === 'seller' ? sellerLinks : customerLinks;
+  const links =
+    role === 'admin'
+      ? adminLinks
+      : role === 'seller'
+      ? sellerLinks
+      : customerLinks;
 
   return (
     <aside className="w-64 glass-panel border-y-0 border-l-0 hidden md:flex flex-col">
       <div className="p-6">
-        <Link href="/" className="text-xl font-bold text-white flex items-center gap-2">
+        <Link
+          href="/"
+          className="text-xl font-bold text-white flex items-center gap-2"
+        >
           <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
             <span className="text-sm">SC</span>
           </div>
           Smart Connect
         </Link>
       </div>
-      
+
       <nav className="flex-1 px-4 py-4 space-y-1">
         {links.map((link) => {
           const Icon = link.icon;
+          const isActive = active === link.href;
+
           return (
             <Link
               key={link.href}
               href={link.href}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                active === link.href 
-                  ? 'bg-emerald-600/10 text-emerald-500 border border-emerald-500/20' 
+                isActive
+                  ? 'bg-emerald-600/10 text-emerald-500 border border-emerald-500/20'
                   : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
               }`}
             >
