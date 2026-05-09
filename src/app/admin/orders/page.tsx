@@ -1,11 +1,12 @@
-"use client";
-
 import Link from "next/link";
 import DashboardSidebar from "@/components/DashboardSidebar";
-import { MOCK_ORDERS, MOCK_STORES, MOCK_SELLERS } from "@/lib/mock-data";
+import { MOCK_ORDERS, MOCK_STORES } from "@/lib/mock-data";
 import { Search, Filter, ExternalLink, Package } from "lucide-react";
+import { requireRole } from "@/lib/server-auth";
 
-export default function AdminOrdersPage() {
+export default async function AdminOrdersPage() {
+  await requireRole(['admin']);
+
   return (
     <div className="flex min-h-screen">
       <DashboardSidebar role="admin" active="/admin/orders" />
@@ -93,3 +94,4 @@ export default function AdminOrdersPage() {
     </div>
   );
 }
+

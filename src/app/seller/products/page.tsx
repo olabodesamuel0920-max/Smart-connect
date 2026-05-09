@@ -1,14 +1,15 @@
-"use client";
-
 import DashboardSidebar from "@/components/DashboardSidebar";
-import SellerGuard, { VerificationStatus } from "@/components/SellerGuard";
+import SellerGuard from "@/components/SellerGuard";
 import { MOCK_PRODUCTS, MOCK_SELLERS } from "@/lib/mock-data";
 import { Plus, Edit2, ExternalLink, Package } from "lucide-react";
 import Link from "next/link";
+import { requireRole } from "@/lib/server-auth";
 
-export default function SellerProductsPage() {
-  // Mock current user as approved seller
-  const currentSeller = MOCK_SELLERS[0]; // Approved
+export default async function SellerProductsPage() {
+  const profile = await requireRole(['seller']);
+  
+  // Find the seller profile associated with the authenticated user
+  const currentSeller = MOCK_SELLERS.find(s => s.id === profile.id) || MOCK_SELLERS[0]; 
   const sellerProducts = MOCK_PRODUCTS.filter(p => p.seller_profile_id === currentSeller.id);
 
   return (
@@ -22,7 +23,7 @@ export default function SellerProductsPage() {
             <p className="text-neutral-400">Manage your gadget listings and stock</p>
           </div>
           
-          <SellerGuard status={currentSeller.verification_status} feature="business">
+          <SellerGuard status={currentSeller.verification_status as any} feature="business">
             <Link href="/seller/products/new" className="btn-primary flex items-center gap-2">
               <Plus size={20} />
               Add Product
@@ -30,7 +31,7 @@ export default function SellerProductsPage() {
           </SellerGuard>
         </header>
 
-        <SellerGuard status={currentSeller.verification_status} feature="business">
+        <SellerGuard status={currentSeller.verification_status as any} feature="business">
           <div className="glass-panel rounded-2xl overflow-hidden border-neutral-800/50">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
@@ -72,7 +73,7 @@ export default function SellerProductsPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span className={`text-sm ${product.stock_quantity > 0 ? 'text-neutral-300' : 'text-red-500 font-bold'}`}>
-                          {product.stock_quantity}
+                           {product.stock_quantity}
                         </span>
                       </td>
                       <td className="px-6 py-4">

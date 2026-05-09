@@ -1,9 +1,11 @@
 import DashboardSidebar from "@/components/DashboardSidebar";
 import SellerGuard from "@/components/SellerGuard";
 import { MOCK_SELLERS } from "@/lib/mock-data";
+import { requireRole } from "@/lib/server-auth";
 
-export default function SellerStorePage() {
-  const currentSeller = MOCK_SELLERS[0];
+export default async function SellerStorePage() {
+  const profile = await requireRole(['seller']);
+  const currentSeller = MOCK_SELLERS.find(s => s.id === profile.id) || MOCK_SELLERS[0];
 
   return (
     <div className="flex min-h-screen">

@@ -145,17 +145,17 @@ export default function SellerOrderDetailPage({ order, items }: { order: any, it
                     <span>₦{order.total_amount.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-neutral-400 text-sm">
-                    <span>Commission (5%)</span>
-                    <span className="text-red-400">-₦{(order.total_amount * 0.05).toLocaleString()}</span>
+                    <span>Platform Fee (7.5%)</span>
+                    <span className="text-red-400">-₦{(order.total_amount * 0.075).toLocaleString()}</span>
                   </div>
                   <div className="pt-4 border-t border-neutral-800 flex justify-between text-white font-bold">
                     <span>Net Receivable</span>
-                    <span className="text-emerald-500">₦{(order.total_amount * 0.95).toLocaleString()}</span>
+                    <span className="text-emerald-500">₦{(order.total_amount * 0.925).toLocaleString()}</span>
                   </div>
                 </div>
                 <div className="mt-6 p-4 bg-neutral-900 rounded-xl text-xs text-neutral-500 leading-relaxed">
                   <ShieldCheck size={14} className="text-emerald-500 inline mr-1 mb-1" />
-                  Funds are currently <b>held in escrow</b>. They will be releasable once the customer confirms delivery or 7 days after delivery.
+                  Funds are currently <b>Held by Smart Connect</b> (Protected Payment). They will be releasable once the customer confirms delivery or 7 days after delivery.
                 </div>
               </div>
             </div>

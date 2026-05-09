@@ -1,11 +1,12 @@
-"use client";
-
 import Link from "next/link";
 import DashboardSidebar from "@/components/DashboardSidebar";
-import { MOCK_ORDERS, MOCK_PRODUCTS } from "@/lib/mock-data";
-import { Package, ChevronRight, Clock, CheckCircle2, Truck, AlertCircle } from "lucide-react";
+import { MOCK_ORDERS } from "@/lib/mock-data";
+import { Package, ChevronRight } from "lucide-react";
+import { requireRole } from "@/lib/server-auth";
 
-export default function CustomerOrdersPage() {
+export default async function CustomerOrdersPage() {
+  const profile = await requireRole(['customer']);
+  
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-neutral-800 text-neutral-400 border-neutral-700';
@@ -17,6 +18,9 @@ export default function CustomerOrdersPage() {
       default: return 'bg-neutral-800 text-neutral-400 border-neutral-700';
     }
   };
+
+  // Only show orders belonging to this customer
+  const userOrders = MOCK_ORDERS.filter(order => order.customer_id === profile.id);
 
   return (
     <div className="flex min-h-screen">
@@ -31,9 +35,9 @@ export default function CustomerOrdersPage() {
             </div>
           </div>
 
-          {MOCK_ORDERS.length > 0 ? (
+          {userOrders.length > 0 ? (
             <div className="space-y-4">
-              {MOCK_ORDERS.map((order) => (
+              {userOrders.map((order) => (
                 <Link 
                   key={order.id} 
                   href={`/dashboard/orders/${order.id}`}
@@ -79,3 +83,4 @@ export default function CustomerOrdersPage() {
     </div>
   );
 }
+

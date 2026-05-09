@@ -1,10 +1,11 @@
-"use client";
-
 import DashboardSidebar from "@/components/DashboardSidebar";
-import { MOCK_PAYMENTS, MOCK_HELD_FUNDS, MOCK_ORDERS } from "@/lib/mock-data";
-import { CreditCard, Landmark, ShieldCheck, ArrowUpRight, DollarSign } from "lucide-react";
+import { MOCK_PAYMENTS, MOCK_HELD_FUNDS } from "@/lib/mock-data";
+import { CreditCard, Landmark, ShieldCheck, DollarSign } from "lucide-react";
+import { requireRole } from "@/lib/server-auth";
 
-export default function AdminPaymentsPage() {
+export default async function AdminPaymentsPage() {
+  await requireRole(['admin']);
+
   const totalVolume = MOCK_PAYMENTS.reduce((acc, curr) => acc + curr.amount, 0);
   const totalHeld = MOCK_HELD_FUNDS.filter(f => f.status === 'held').reduce((acc, curr) => acc + curr.total_amount, 0);
   const totalCommission = MOCK_HELD_FUNDS.reduce((acc, curr) => acc + curr.commission_amount, 0);
@@ -16,8 +17,8 @@ export default function AdminPaymentsPage() {
       <main className="flex-1 p-8">
         <div className="max-w-6xl mx-auto">
           <div className="mb-12">
-            <h1 className="text-3xl font-bold text-white mb-2">Payments & Escrow</h1>
-            <p className="text-neutral-400">Manage financial transactions and held funds.</p>
+            <h1 className="text-3xl font-bold text-white mb-2">Payments & Protected Funds</h1>
+            <p className="text-neutral-400">Manage financial transactions and funds held by Smart Connect.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -35,7 +36,7 @@ export default function AdminPaymentsPage() {
                 <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500">
                   <ShieldCheck size={20} />
                 </div>
-                <span className="text-sm font-medium text-neutral-400">Total Held (Escrow)</span>
+                <span className="text-sm font-medium text-neutral-400">Held by Smart Connect</span>
               </div>
               <p className="text-3xl font-bold text-white">₦{totalHeld.toLocaleString()}</p>
             </div>
@@ -108,3 +109,4 @@ export default function AdminPaymentsPage() {
     </div>
   );
 }
+
