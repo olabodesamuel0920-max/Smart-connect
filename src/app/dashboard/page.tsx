@@ -1,6 +1,9 @@
 import DashboardSidebar from "@/components/DashboardSidebar";
+import { requireRole } from "@/lib/server-auth";
 
-export default function CustomerDashboard() {
+export default async function CustomerDashboard() {
+  const profile = await requireRole(['customer']);
+
   return (
     <div className="flex min-h-screen">
       <DashboardSidebar role="customer" active="/dashboard" />
@@ -8,7 +11,7 @@ export default function CustomerDashboard() {
       <main className="flex-1 p-8">
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-white tracking-tight">Buyer Dashboard</h1>
-          <p className="text-neutral-400">Welcome back, John Doe</p>
+          <p className="text-neutral-400">Welcome back, {profile.email}</p>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

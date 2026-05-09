@@ -1,8 +1,11 @@
 import DashboardSidebar from "@/components/DashboardSidebar";
 import SellerGuard, { VerificationStatus } from "@/components/SellerGuard";
+import { requireRole } from "@/lib/server-auth";
 
-export default function SellerDashboard() {
-  // Mock status - in a real app, this would come from the database/session
+export default async function SellerDashboard() {
+  const profile = await requireRole(['seller']);
+  
+  // Mock status - in a real app, this would come from the database/profile
   const mockStatus: VerificationStatus = 'pending'; 
 
   return (
@@ -13,7 +16,7 @@ export default function SellerDashboard() {
         <header className="mb-8 flex justify-between items-end">
           <div>
             <h1 className="text-3xl font-bold text-white tracking-tight">Seller Hub</h1>
-            <p className="text-neutral-400">Manage your store and gadgets</p>
+            <p className="text-neutral-400">Manage store for {profile.email}</p>
           </div>
           <div className="bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-emerald-500/20">
             {mockStatus}

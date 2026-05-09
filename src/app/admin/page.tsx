@@ -1,7 +1,10 @@
 import DashboardSidebar from "@/components/DashboardSidebar";
 import { CheckCircle, XCircle, ExternalLink } from "lucide-react";
+import { requireRole } from "@/lib/server-auth";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  await requireRole(['admin']);
+
   const pendingSellers = [
     { id: 1, name: "Gadget Hub Ltd", email: "hub@example.com", date: "2024-05-01" },
     { id: 2, name: "Phone Doctor", email: "doc@example.com", date: "2024-05-03" },

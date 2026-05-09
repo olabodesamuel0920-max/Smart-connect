@@ -1,11 +1,12 @@
-"use client";
-
 import Link from "next/link";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import { MOCK_ORDERS } from "@/lib/mock-data";
 import { Package, ChevronRight, Clock, ShieldCheck, Truck, ShoppingBag } from "lucide-react";
+import { requireRole } from "@/lib/server-auth";
 
-export default function SellerOrdersPage() {
+export default async function SellerOrdersPage() {
+  const profile = await requireRole(['seller']);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-neutral-800 text-neutral-400 border-neutral-700';
