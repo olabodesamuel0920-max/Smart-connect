@@ -3,9 +3,11 @@
 import { supabase, getSupabaseAdmin } from "@/lib/supabase";
 import { OrderStatus, PaymentStatus, HeldFundStatus } from "@/types";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
-const COMMISSION_RATE = 0.05; // 5% commission placeholder
+const COMMISSION_RATE = 0.075; // 7.5% commission rate (Sprint 4)
 
 export async function createPendingOrder(data: {
   customer_id: string;
@@ -149,9 +151,60 @@ export async function verifyPayment(reference: string, orderId: string) {
 
 export async function updateOrderStatus(orderId: string, status: OrderStatus) {
   try {
-    const { error } = await supabase
+    // 1. Get current user session from cookies
+    const cookieStore = cookies();
+    const userRole = cookieStore.get("user_role")?.value;
+    const userId = cookieStore.get("user_id")?.value;
+
+    if (!userRole || !userId) {
+      return { success: false, error: "Unauthorized: No active session." };
+    }
+
+    // 2. Fetch the order details to perform security/ownership checks
+    const admin = getSupabaseAdmin();
+    const { data: order, error: orderErr } = await admin
       .from("orders")
-      .update({ status, updated_at: new Date().toISOString() })
+      .select("*")
+      .eq("id", orderId)
+      .maybeSingle();
+
+    if (orderErr || !order) {
+      return { success: false, error: "Order not found." };
+    }
+
+    // 3. Ownership and status transitions checks
+    if (status === "processing" || status === "delivered") {
+      if (userRole !== "seller" || order.seller_profile_id !== userId) {
+        return { success: false, error: "Unauthorized: Only the seller can update order status." };
+      }
+      if (status === "processing" && order.status !== "paid") {
+        return { success: false, error: `Invalid status transition from '${order.status}' to 'processing'.` };
+      }
+      if (status === "delivered" && order.status !== "processing") {
+        return { success: false, error: `Invalid status transition from '${order.status}' to 'delivered'.` };
+      }
+    } else if (status === "completed") {
+      if (userRole !== "customer" || order.customer_id !== userId) {
+        return { success: false, error: "Unauthorized: Only the customer can confirm delivery." };
+      }
+      if (order.status !== "delivered") {
+        return { success: false, error: "Order must be marked as delivered before confirming receipt." };
+      }
+    } else {
+      return { success: false, error: "Invalid status requested." };
+    }
+
+    // 4. Perform update using admin client
+    const updateData: any = { status, updated_at: new Date().toISOString() };
+    if (status === "delivered") {
+      updateData.delivered_at = new Date().toISOString();
+    } else if (status === "completed") {
+      updateData.confirmed_at = new Date().toISOString();
+    }
+
+    const { error } = await admin
+      .from("orders")
+      .update(updateData)
       .eq("id", orderId);
 
     if (error) throw error;
@@ -159,10 +212,15 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus) {
     revalidatePath(`/dashboard/orders/${orderId}`);
     revalidatePath(`/seller/orders/${orderId}`);
     revalidatePath("/seller/orders");
+    revalidatePath("/admin/payments");
 
     return { success: true };
   } catch (error: any) {
     console.error("Order Status Update Error:", error);
     return { success: false, error: error.message };
   }
+}
+
+export async function confirmOrderDelivery(orderId: string) {
+  return await updateOrderStatus(orderId, "completed");
 }

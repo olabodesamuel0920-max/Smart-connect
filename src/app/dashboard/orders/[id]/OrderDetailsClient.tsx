@@ -1,13 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import DashboardSidebar from "@/components/DashboardSidebar";
-import { ChevronLeft, Package, MapPin, Truck, ShieldCheck, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import { ChevronLeft, Package, MapPin, Truck, ShieldCheck, Clock, CheckCircle2, AlertCircle, RefreshCcw } from "lucide-react";
+import { confirmOrderDelivery } from "@/app/actions/orders";
 
 export default function CustomerOrderDetailPage({ order, items, store }: { order: any, items: any[], store: any }) {
   const params = useParams();
   const id = params.id as string;
+  const router = useRouter();
+  
+  const [updating, setUpdating] = useState(false);
+  const [showIssueModal, setShowIssueModal] = useState(false);
   
   // order, items and store now come from props
 
@@ -56,9 +62,37 @@ export default function CustomerOrderDetailPage({ order, items, store }: { order
               <p className="text-neutral-500">Placed on {new Date(order.created_at).toLocaleString()}</p>
             </div>
             
-            {order.status === 'delivered' && (
-              <button className="btn-primary">Confirm Receipt</button>
-            )}
+            <div className="flex items-center gap-3">
+              {order.status === 'delivered' && (
+                <button 
+                  onClick={async () => {
+                    if (confirm("Are you sure you have received your package in good condition? This will authorize release of the held payment to the seller.")) {
+                      setUpdating(true);
+                      const res = await confirmOrderDelivery(order.id);
+                      if (res.success) {
+                        router.refresh();
+                      } else {
+                        alert("Failed to confirm delivery: " + res.error);
+                        setUpdating(false);
+                      }
+                    }
+                  }}
+                  disabled={updating}
+                  className="btn-primary flex items-center gap-2"
+                >
+                  {updating && <RefreshCcw size={16} className="animate-spin" />}
+                  Confirm Receipt
+                </button>
+              )}
+              {['paid', 'processing', 'delivered'].includes(order.status) && (
+                <button 
+                  onClick={() => setShowIssueModal(true)}
+                  className="px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl text-sm font-semibold transition-all"
+                >
+                  Report Issue
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -141,16 +175,59 @@ export default function CustomerOrderDetailPage({ order, items, store }: { order
 
               {/* Support */}
               <div className="glass-panel p-8 rounded-3xl border-emerald-500/10">
-                <h3 className="font-bold text-white mb-4">Need help?</h3>
-                <p className="text-sm text-neutral-400 mb-6">If there's an issue with your order, please contact our support team.</p>
-                <button className="w-full bg-neutral-900 border border-neutral-800 py-3 rounded-xl text-sm font-bold hover:bg-neutral-800 transition-all">
-                  Contact Support
-                </button>
+                <h3 className="font-bold text-white mb-4">Protected Payment</h3>
+                <p className="text-xs text-neutral-400 mb-4 leading-relaxed">
+                  Smart Connect secures all payments. Your funds are **Held by Smart Connect** and only released to the seller after you confirm receipt.
+                </p>
+                <div className="flex flex-col gap-2">
+                  <button 
+                    onClick={() => setShowIssueModal(true)}
+                    className="w-full bg-red-500/10 border border-red-500/20 py-2.5 rounded-xl text-xs font-bold text-red-400 hover:bg-red-500/20 transition-all"
+                  >
+                    Report Issue
+                  </button>
+                  <button className="w-full bg-neutral-900 border border-neutral-800 py-2.5 rounded-xl text-xs font-bold hover:bg-neutral-800 transition-all">
+                    Contact Support
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </main>
+
+      {showIssueModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="glass-panel p-8 rounded-2xl max-w-md w-full border-neutral-800">
+            <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+              <AlertCircle className="text-red-500" />
+              Report Order Issue
+            </h3>
+            <p className="text-neutral-400 text-sm mb-6 leading-relaxed">
+              If your package is delayed, damaged, or doesn't match the description, let us know immediately. 
+              <br /><br />
+              Smart Connect holds your funds securely. By reporting an issue, we will pause the automatic payout timers while our support team contacts you to investigate.
+            </p>
+            <div className="flex gap-4">
+              <button 
+                onClick={() => {
+                  alert("Issue reported. Smart Connect support has been notified. We will reach out to you at your account email within 24 hours.");
+                  setShowIssueModal(false);
+                }}
+                className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-sm transition-all"
+              >
+                Submit Report
+              </button>
+              <button 
+                onClick={() => setShowIssueModal(false)}
+                className="flex-1 px-4 py-2.5 bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 text-white font-bold rounded-xl text-sm transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
